@@ -1,7 +1,7 @@
 # Brain-Tumor-Classification-Using-Deep-Learning-and-3D-Transformer-Integration
 Brain Tumor Classification Using Deep Learning and 3D Transformer Integration
 Abstract
-Brain tumors are among the most serious neurological disorders and require early detection for effective treatment. Magnetic Resonance Imaging (MRI) is widely used for identifying brain abnormalities due to its ability to provide detailed images of soft tissues. This project presents a complete deep vision pipeline for brain tumor analysis using MRI images from the BraTS dataset. The proposed framework includes preprocessing, segmentation, feature extraction, classification, and transformer-based analysis. MRI images were first enhanced using image processing techniques and then segmented to isolate tumor regions. Statistical and geometric features were extracted for analysis. A Convolutional Neural Network (CNN) was used for classification, while a 3D CNN-Transformer architecture was implemented to model voxel-to-voxel dependencies as the advanced research component. Experimental results showed that the CNN achieved an accuracy of 75%, while the Transformer-based model achieved an accuracy of 40%. The study demonstrates both the potential and limitations of deep learning approaches when applied to a relatively small medical imaging dataset.
+Brain tumors are among the most serious neurological disorders and require early detection for effective treatment. Magnetic Resonance Imaging (MRI) is widely used for identifying brain abnormalities due to its ability to provide detailed images of soft tissues. This project presents a complete deep vision pipeline for brain tumor analysis using MRI images from the BraTS dataset. The proposed framework includes preprocessing, segmentation, feature extraction, classification, and transformer-based analysis. MRI images were enhanced using image processing techniques and segmented to isolate tumor regions. Statistical texture features and geometric features were extracted for analysis. Three classification approaches were evaluated: Random Forest, Convolutional Neural Network (CNN), and a 3D CNN-Transformer architecture. Experimental results showed that the Random Forest classifier achieved an accuracy of 87.5%, the CNN achieved 80%, and the Transformer-based model achieved 40%. The results demonstrate that traditional machine learning and CNN-based approaches are more effective for small medical imaging datasets, while Transformer architectures generally require larger datasets for optimal performance.
 
 Keywords: Brain Tumor, MRI, Deep Learning, CNN, Transformer, Medical Image Processing, BraTS Dataset
 
@@ -148,23 +148,49 @@ Centroid Coordinates
 These features were stored in a CSV file for further analysis.
 
 4.5 CNN Classification
-The CNN model was developed to classify tumor regions into High Risk and Low Risk categories.
+The CNN model was developed to classify tumor regions into High Risk and Low Risk categories. Labels were generated using the median tumor area extracted from the segmented tumor regions.
 
-The architecture consisted of:
+To improve model performance and reduce overfitting, the CNN architecture was enhanced through:
 
-Convolution Layer
+• Data Augmentation
 
-Max Pooling Layer
+• Batch Normalization
 
-Convolution Layer
+• Early Stopping
 
-Max Pooling Layer
+• Dropout Regularization
 
-Dense Layer
+• Larger Convolution Filters (5×5)
 
-Output Layer
+The final CNN architecture consisted of:
 
-The CNN learned spatial patterns from segmented tumor images.
+• Data Augmentation Layer
+
+• Conv2D (32 Filters, 5×5)
+
+• Batch Normalization
+
+• Max Pooling Layer
+
+• Conv2D (64 Filters, 5×5)
+
+• Batch Normalization
+
+• Max Pooling Layer
+
+• Conv2D (128 Filters, 5×5)
+
+• Batch Normalization
+
+• Max Pooling Layer
+
+• Dense Layer (128 Neurons)
+
+• Dropout Layer (0.5)
+
+• Output Layer (Sigmoid Activation)
+
+Data augmentation included image rotation, zooming, flipping, and translation. Early Stopping was used to prevent overfitting and restore the best-performing model weights.
 
 4.6 3D Transformer Integration
 To satisfy the advanced research challenge, a Transformer block was integrated into a 3D CNN architecture.
@@ -175,59 +201,87 @@ The Transformer employed Multi-Head Self-Attention to model voxel-to-voxel relat
 
 This approach allowed the network to capture global spatial dependencies that may not be learned through convolutional operations alone.
 
+Batch Normalization and Early Stopping were incorporated to improve training stability. Experiments were also conducted with different attention head configurations and dense layer sizes to evaluate the effect of model complexity on performance.
+
 5. Experimental Results
 5.1 CNN Results
-Confusion Matrix
-Insert your CNN confusion matrix image here.
-
 Performance Metrics
+
 Metric	Value
-Accuracy	75%
-Precision	0.80
-Recall	0.60
-F1 Score	0.57
-The CNN correctly identified all High Risk cases while misclassifying some Low Risk cases.
+Accuracy	80.0%
+Training Samples	20
+Validation Samples	5
+Correct Predictions	4
+Incorrect Predictions	1
+
+The enhanced CNN model achieved an accuracy of 80% on the validation dataset. The integration of Data Augmentation, Batch Normalization, Early Stopping, Dropout, and larger convolution filters improved model stability and reduced overfitting. Despite the limited dataset size, the CNN successfully learned meaningful tumor characteristics from MRI images.
 
 5.2 Transformer Results
 Confusion Matrix
 [[0 3]
- [0 2]]
+[0 2]]
+
 Performance Metrics
+
 Metric	Value
-Accuracy	40%
+Accuracy	40.0%
 Precision	0.40
 Recall	1.00
 F1 Score	0.57
-The Transformer successfully identified High Risk cases but incorrectly classified all Low Risk cases as High Risk.
+
+The Transformer-based model classified all validation samples as High Risk, resulting in poor classification of Low Risk cases. Although the self-attention mechanism successfully captured global voxel relationships, the model was unable to generalize effectively because of the limited dataset size.
+
 
 6. Discussion
-The CNN achieved better performance than the Transformer on the selected dataset. The CNN obtained an accuracy of 75%, indicating its ability to learn useful tumor characteristics from segmented MRI images.
+Classification Performance Comparison
 
-Although the Transformer architecture provides the ability to model long-range voxel relationships, its performance was limited by the small dataset size. Transformers generally require significantly larger datasets to effectively learn attention patterns.
+Model	Accuracy
+Random Forest	87.5%
+CNN	80.0%
+3D CNN + Transformer	40.0%
 
-The results suggest that CNN-based methods remain more practical for small medical imaging datasets, while Transformer-based approaches may become advantageous when larger datasets are available.
+The Random Forest classifier achieved the highest accuracy of 87.5%. This performance can be attributed to the effectiveness of the extracted GLCM texture features and geometric features used for classification.
+
+The CNN achieved an accuracy of 80%. The addition of Data Augmentation, Batch Normalization, Early Stopping, Dropout, and larger convolution filters improved training stability and reduced overfitting. These enhancements enabled the network to learn discriminative tumor features despite the limited dataset size.
+
+The Transformer-based model achieved only 40% accuracy. Although Transformers are capable of modeling global relationships through self-attention mechanisms, they generally require significantly larger datasets. With only 25 MRI cases available, the Transformer struggled to learn effective feature representations and tended to predict a single class.
+
+These results demonstrate that increasing model complexity does not always improve performance. For small medical imaging datasets, traditional machine learning and CNN-based approaches may outperform Transformer-based architectures.
+
 
 7. Conclusion
-This project presented a complete deep vision pipeline for brain tumor analysis using MRI images from the BraTS dataset. The framework incorporated preprocessing, segmentation, feature extraction, classification, and Transformer-based learning.
+This project presented a complete brain tumor analysis pipeline using MRI images from the BraTS dataset. The framework incorporated preprocessing, segmentation, feature extraction, classification, and Transformer-based learning.
 
-The CNN model achieved an accuracy of 75% and demonstrated better performance than the Transformer architecture. The Transformer model achieved an accuracy of 40%, highlighting the challenges of applying attention-based architectures to small datasets.
+MRI images were enhanced using Gaussian filtering, mean filtering, median filtering, anti-aliasing, and resizing techniques. Tumor regions were segmented using Sobel edge detection and morphological operations. Statistical texture features and geometric features were extracted and stored for analysis.
 
-Overall, the study demonstrates the effectiveness of deep learning techniques for automated brain tumor analysis and provides valuable insights into the strengths and limitations of CNN and Transformer approaches.
+Three classification approaches were evaluated:
+
+• Random Forest Classifier
+
+• Convolutional Neural Network (CNN)
+
+• 3D CNN + Transformer
+
+The Random Forest classifier achieved the highest accuracy of 87.5%, followed by the CNN with 80.0% accuracy. The Transformer-based model achieved 40.0% accuracy because of the limited dataset size.
+
+The study demonstrates that traditional machine learning and CNN-based approaches remain highly effective for small medical imaging datasets, while Transformer architectures generally require larger datasets to achieve their full potential.
 
 8. Future Work
 Future improvements may include:
 
-Increasing the dataset size
+• Increasing the dataset size
 
-Using additional MRI modalities
+• Using additional MRI modalities
 
-Implementing advanced Vision Transformers
+• Implementing advanced Vision Transformers
 
-Applying data augmentation techniques
+• Applying data augmentation techniques
 
-Exploring hybrid CNN-Transformer architectures
+• Exploring hybrid CNN-Transformer architectures
 
-Using clinically validated labels instead of generated risk categories
+• Using clinically validated labels instead of generated risk categories
+
+• Investigating transfer learning and pretrained medical imaging models for improved performance on limited datasets.
 
 9. References
 Menze, B. et al. The Multimodal Brain Tumor Image Segmentation Benchmark (BraTS).
